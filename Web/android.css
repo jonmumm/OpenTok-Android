@@ -1,0 +1,40 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body {
+	background: #222;
+	color: #EEE;
+	font: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 12px;	
+}
+
+#pageWrapper {
+	width: 760px;
+	margin: 0 auto;
+}
+
+#streamContainer {
+	margin: 0 auto;
+	background: #333;
+}
+
+#download {
+	
+}
+
+ul {
+	list-style-type: none;	
+}
+
+a:link {
+	text-decoration: none;
+	color: #AAA;	
+}
+
+a:hover {
+	color: #CCC;	
+}
+
+a:visited {
+	color: #AAA;	
+}

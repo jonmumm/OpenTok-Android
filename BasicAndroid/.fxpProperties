@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" compiles="true" parentProject="824a5539-0adf-4325-b784-bcf7a84cabe6" projectUUID="824a5539-0adf-4325-b784-bcf7a84cabe6" sdkVersion="4.5.0" uuid="9b3bc9ee-3d55-480a-9e35-a0d62620aac6" version="9">
+  <projects/>
+  <src/>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="9b3bc9ee-3d55-480a-9e35-a0d62620aac6"/>
+    <linked location="/libs" path="/libs" position="1" uuid="9b3bc9ee-3d55-480a-9e35-a0d62620aac6"/>
+    <linked location="/libs/opentok.swc" path="\libs\opentok.swc" position="2" uuid="9b3bc9ee-3d55-480a-9e35-a0d62620aac6"/>
+  </swc>
+  <misc/>
+  <theme/>
+  <mxmlFormattingPrefs groupAttributesByState="true" maxLineWidth="100" mxmlAlignAttributes="true" mxmlAttributeOrder="id,userLabel,includeIn,excludeFrom,visible,x,y,z,left,right,top,bottom,width,height,minWidth,minHeight,maxWidth,maxHeight,label" mxmlKeepAttributeValuesOrganized="true"/>
+</fxpProperties>

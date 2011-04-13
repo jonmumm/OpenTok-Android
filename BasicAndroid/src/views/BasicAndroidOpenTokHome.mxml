@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		initialize="view1_initializeHandler(event)" overlayControls="false" title="OpenTok Sample">
+	<s:states>
+		<s:State name="Landscape"/>
+	</s:states>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.tokbox.TB;
+			import com.tokbox.events.*;
+			import com.tokbox.model.Publisher;
+			import com.tokbox.model.Session;
+			
+			import mx.core.UIComponent;
+			import mx.events.FlexEvent;
+			
+			//*********************************************************************
+			// TokBox Variables
+			//*********************************************************************
+			protected static const apiKey:String = "413302"; // Use your own API key
+			protected static const sessionId:String = "28757622dbf26a5a7599c2d21323765662f1d436"; // This is usually generated
+			protected static const token:String = "devtoken"; // Permissions token used for development
+
+			protected var session:Session;
+			protected var publisher:Publisher;
+
+			//*********************************************************************
+			// View Event Handlers
+			//*********************************************************************
+			
+			// View Initialized Handler
+			protected function view1_initializeHandler(event:FlexEvent):void
+			{
+				// Get session object
+				session = TB.initSession(sessionId);
+				
+				session.addEventListener(SessionConnectEvent.CONNECTED, sessionConnectHandler);			
+			}
+						
+			//*********************************************************************
+			// OpenTok API Event Handlers
+			//*********************************************************************
+			
+			// Session Connected Handler
+			protected function sessionConnectHandler(event:SessionConnectEvent):void
+			{
+				// Enable the button to publish
+				publishButton.enabled = true;
+			}
+			
+			// Exception logger
+			protected function exceptionHandler(event:ExceptionEvent):void {
+				trace("Exception: " + event.code + "::" + event.message);
+			}
+			
+			//*********************************************************************
+			// OpenTok API Helper Methods
+			//*********************************************************************
+			protected function publishStream():void
+			{	
+				publisher = session.publish();
+				
+				// Stretch publisher displayObject to fit screen
+				publisher.height = videoWrapper.height;
+				publisher.width = videoWrapper.height * 4/3;
+
+				// Add the publisher to the display
+				videoWrapper.addChild(publisher);
+			}
+			
+			protected function unpublishStream():void
+			{				
+				if (publisher != null) {
+					// Remove publisher from screen
+					videoWrapper.removeChild(publisher);	
+					
+					session.unpublish(publisher);
+					
+					publisher = null;
+				}
+			}
+			
+			//*********************************************************************
+			// Button Event Handlers
+			//*********************************************************************
+			
+			// Connect Button Handler
+			protected function connectButton_clickHandler(event:MouseEvent):void
+			{				
+				// If we are not connected, connect
+				if (session.connection == null) {
+					session.connect(apiKey, token);
+					
+					connectButton.label = "Disconnect";
+				} else {
+					unpublishStream();
+					session.disconnect();				
+					
+					connectButton.label = "Connect";
+					publishButton.label = "Publish";
+					publishButton.enabled = false;
+				}
+			}
+			
+			// Publish Button Handler
+			protected function publishButton_clickHandler(event:MouseEvent):void
+			{
+				// If we are not already publishing
+				if (publisher == null) {
+					publishStream();
+					publishButton.label = "Unpublish";
+				} else {
+					unpublishStream();
+					publishButton.label = "Publish";
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<s:actionContent>
+		<s:Button id="connectButton" click="connectButton_clickHandler(event)" label="Connect"/>
+		<s:Button id="publishButton" click="publishButton_clickHandler(event)" label="Publish" enabled="false"/>
+	</s:actionContent>
+	<s:HGroup id="group" left="0" right="0" top="0" bottom="0">
+		<mx:Spacer height="100%" width="50%" />
+		<mx:UIComponent id="videoWrapper" x="0" y="0" width="100%" height="100%"/>
+		<mx:Spacer height="100%" width="50%" />
+	</s:HGroup>
+	
+</s:View>

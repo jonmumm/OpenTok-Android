@@ -1,0 +1,129 @@
+
+<html lang="en"> 
+<head> 
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"> 
+	<title>OpenTok AIR For Android</title> 
+	<script src="http://staging.tokbox.com/v0.91/js/TB.min.js" type="text/javascript" charset="utf-8"></script> 
+    <script src="LayoutContainer.js" type="text/javascript" charset="utf-8"></script> 
+	<script type="text/javascript" charset="utf-8"> 
+		var apiKey = 413302; // OpenTok sample API key. Replace with your own API key.
+		var sessionId = '28757622dbf26a5a7599c2d21323765662f1d436'; // Replace with your session ID.
+		var token = 'devtoken'; // Should not be hard-coded.
+								// Add to the page using the OpenTok server-side libraries.
+		var session;
+ 
+		// Un-comment either of the following to set automatic logging and exception handling.
+		// See the exceptionHandler() method below.
+		// TB.setLogLevel(TB.DEBUG);
+		TB.addEventListener("exception", exceptionHandler);
+ 
+		if (TB.checkSystemRequirements() != TB.HAS_REQUIREMENTS) {
+			alert("You don't have the minimum requirements to run this application."
+				  + "Please upgrade to the latest version of Flash.");
+		} else {
+			// Initialize the session
+			session = TB.initSession(sessionId);
+ 
+			// Add event listeners to the session
+			session.addEventListener('sessionConnected', sessionConnectedHandler);
+			session.addEventListener('streamCreated', streamCreatedHandler);
+			session.addEventListener('streamDestroyed', streamDestroyedHandler);
+			
+			// Initialize the layout container
+			LayoutContainer.init("streamContainer", 760, 480); 
+			
+			// Connect to the session
+			session.connect(apiKey, token);
+		}
+ 
+		//--------------------------------------
+		//  OPENTOK EVENT HANDLERS
+		//--------------------------------------
+ 
+		function sessionConnectedHandler(event) {		
+			// Subscribe to all streams currently in the Session
+			subscribeToStreams(event.streams);
+						
+			// Re-layout the container with the new streams
+			LayoutContainer.layout();
+		}
+ 
+		function streamCreatedHandler(event) {
+			// Subscribe to the newly created streams
+			subscribeToStreams(event.streams);
+			
+			// Re-layout the container with the new streams
+			LayoutContainer.layout();
+		}
+ 
+		function streamDestroyedHandler(event) {	
+			// Get all destroyed streams		
+			for (var i = 0; i < event.streams.length; i++) {
+				// For each stream get the subscriber to that stream
+				var subscribers = session.getSubscribersForStream(event.streams[i]);
+				for (var j = 0; j < subscribers.length; j++) {
+					// Then remove each stream
+					LayoutContainer.removeStream(subscribers[j].id);
+				}
+			}
+			
+			// Re-layout the container without the removed streams
+			LayoutContainer.layout();
+	
+		}
+ 
+		/*
+		If you un-comment the call to TB.addEventListener("exception", exceptionHandler) above, OpenTok calls the
+		exceptionHandler() method when exception events occur. You can modify this method to further process exception events.
+		If you un-comment the call to TB.setLogLevel(), above, OpenTok automatically displays exception event messages.
+		*/
+		function exceptionHandler(event) {
+			alert("Exception: " + event.code + "::" + event.message);
+		}
+ 
+		//--------------------------------------
+		//  HELPER METHODS
+		//--------------------------------------
+ 
+		function publishStream() {
+			// Make up an id for our publisher
+			var divId = 'opentok_publisher';
+			
+			// Pass in TRUE since this is a publisher
+			LayoutContainer.addStream(divId, true);
+			
+			session.publish(divId);
+		}
+		
+		function subscribeToStreams(streams) {
+			// For each stream
+			for (var i = 0; i < streams.length; i++) {
+				// Check if this is the stream that I am publishing, and if so do not subscribe.
+				if (streams[i].connection.connectionId != session.connection.connectionId) {
+					// Make a unique div id for this stream
+					var divId = 'stream_' + streams[i].streamId;
+
+					// Pass in FALSE since this is a subscriber
+					LayoutContainer.addStream(divId, false);
+
+					session.subscribe(streams[i], divId);				
+				}
+			}
+		}
+ 
+	</script> 
+<link href="android.css" rel="stylesheet" type="text/css">
+</head> 
+<body> 
+	<div id="pageWrapper">		
+        <div id="download">
+        	<ul>
+            	<li><a href="OpenTokAndroid.zip">Download All Project Files and Sample</a></li>
+            	<li><a href="BasicAndroidOpenTok.fxp">Download Flex Project</a> (must use <a href="http://labs.adobe.com/technologies/flashbuilder_burrito/">Flex Burrito</a>)</li>
+            	<li><a href="http://tokbox.com">OpenTok API</a></li>
+            </ul>
+        </div>
+        <div id="streamContainer"></div> 
+    </div>
+</body> 
+</html> 
